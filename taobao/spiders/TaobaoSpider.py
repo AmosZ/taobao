@@ -24,7 +24,6 @@ class TaobaoSpider(Spider):
             yield Request(url,callback=self.parse_list)
 
     def parse_list(self,response):
-#        inspect_response(response, self)
         retailer_list_xpath = '//h3[@class="title"]'
         sel = Selector(response)
         for s in sel.xpath(retailer_list_xpath):
@@ -32,14 +31,10 @@ class TaobaoSpider(Spider):
 
             # define processors
             loader.default_input_processor = MapCompose(unicode.strip)
-#            loader.default_output_processor = Join()
+            loader.default_output_processor = Join()
 
             # iterate over fields and add xpaths to the loader
             for field, xpath in self.item_fields.iteritems():
                 loader.add_xpath(field, xpath)
             yield loader.load_item()
 
-#        for s in sel.xpath(retailer_list_xpath):
-#            log.msg(s.xpath('a/text()').extract(),log.DEBUG)
-#            print(s.xpath('a/text()').extract())
-#            loader = ItemLoader(Retailer(),selector=s)
