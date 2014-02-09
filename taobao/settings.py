@@ -11,7 +11,7 @@ BOT_NAME = 'taobao'
 SPIDER_MODULES = ['taobao.spiders']
 NEWSPIDER_MODULE = 'taobao.spiders'
 
-ITEM_PIPELINES = ['taobao.pipelines.TaobaoPipeline']
+ITEM_PIPELINES = {'taobao.pipelines.TaobaoPipeline':100}
 
 DATABASE = {'drivername': 'postgres',
             'host': 'localhost',

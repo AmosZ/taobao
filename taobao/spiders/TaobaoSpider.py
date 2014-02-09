@@ -1,11 +1,14 @@
 from scrapy.spider import Spider
 from scrapy.selector import Selector
-from taobao.items import Category,Retailer
 from scrapy.http import Request
 from scrapy.shell import inspect_response
 from scrapy.contrib.loader import ItemLoader
 from scrapy.contrib.loader.processor import MapCompose, Join
 from scrapy import log
+#We define same Seller class in directory Models and Items.I
+#It won't bring any confusion because Spider is at the highest layer and it can only access class Seller in Items
+from ..Items.Seller import *
+from ..Items.Commodity import *
 
 class TaobaoSpider(Spider):
     name = "taobao"
@@ -13,28 +16,36 @@ class TaobaoSpider(Spider):
     start_urls = ["http://www.taobao.com/market/3c/phone_index.php"]
 
     category_url_xpath = '//*[@id="guid-1355118887616"]/div/div/div/p[1]/a[1]/@href'
-    item_fields = {
-            'title': './/a/text()',
-            'url': './/a/@href'
-            }
+#   start_urls = ["http://spu.taobao.com/spu/3c/detail.htm?&cat=1512&spuid=229361412"]
 
+    #Retrieve iphone5s list url
     def parse(self,response):
         selector = Selector(response)
         for url in selector.xpath(self.category_url_xpath).extract():
             yield Request(url,callback=self.parse_list)
 
+    #Parse iphone5s list
     def parse_list(self,response):
-        retailer_list_xpath = '//h3[@class="title"]'
+        #Get seller attributes
         sel = Selector(response)
-        for s in sel.xpath(retailer_list_xpath):
-            loader = ItemLoader(Retailer(),selector=s)
+        for s in sel.xpath(Seller.base_xpath):
+            seller_loader = ItemLoader(Seller(),selector=s)
 
-            # define processors
-            loader.default_input_processor = MapCompose(unicode.strip)
-            loader.default_output_processor = Join()
+            # iterate over fields and add xpaths to the seller_loader
+            seller_loader.add_xpath('name',Seller.item_fields['name'])
+#            seller_loader.add_xpath('url',Seller.item_fields['url'])
+            seller_loader.add_xpath('sellerId',Seller.item_fields['sellerId'])
+            seller_loader.add_xpath('reputScore',Seller.item_fields['reputScore'])
+            seller_loader.add_xpath('positiveFeedbackRate',Seller.item_fields['positiveFeedbackRate'])
+            seller_loader.add_xpath('shopDesc',Seller.item_fields['shopDesc'])
+            yield seller_loader.load_item()
 
-            # iterate over fields and add xpaths to the loader
-            for field, xpath in self.item_fields.iteritems():
-                loader.add_xpath(field, xpath)
-            yield loader.load_item()
+        #Get commodity attributes
+        for s in sel.xpath(Commodity.base_xpath):
+            comm_loader = ItemLoader(Commodity(),selector=s)
+            comm_loader.add_xpath('title',Commodity.item_fields['title'])
+#            comm_loader.add_xpath('url',Commodity.item_fields['url'])
+            comm_loader.add_xpath('turnover',Commodity.item_fields['turnover'])
+            comm_loader.add_xpath('rateNumber',Commodity.item_fields['rateNumber'])
+            yield comm_loader.load_item()
 
