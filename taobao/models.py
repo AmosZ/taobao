@@ -1,3 +1,4 @@
+#-*-coding:utf-8-*- 
 from peewee import *
 db = PostgresqlDatabase('taobao',user='zq')
 class PostgresqlModel(Model):

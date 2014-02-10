@@ -1,3 +1,4 @@
+#-*-coding:utf-8-*-
 from scrapy.spider import Spider
 from scrapy.selector import Selector
 from scrapy.http import Request
@@ -17,12 +18,12 @@ class TaobaoSpider(Spider):
 
     category_url_xpath = '//*[@id="guid-1355118887616"]/div/div/div/p[1]/a[1]/@href'
 #   start_urls = ["http://spu.taobao.com/spu/3c/detail.htm?&cat=1512&spuid=229361412"]
+    next_page_xpath = './/a[@class="vm-page-next"]/@href'
 
     #Retrieve iphone5s list url
     def parse(self,response):
         selector = Selector(response)
-        for url in selector.xpath(self.category_url_xpath).extract():
-            yield Request(url,callback=self.parse_list)
+        yield Request(selector.xpath(self.category_url_xpath).extract()[0],callback=self.parse_list)
 
     #Parse iphone5s list
     def parse_list(self,response):
@@ -50,4 +51,9 @@ class TaobaoSpider(Spider):
             comm_loader.add_xpath('turnover',Commodity.item_fields['turnover'])
             comm_loader.add_xpath('rateNumber',Commodity.item_fields['rateNumber'])
             yield comm_loader.load_item()
+
+        if(sel.xpath(self.next_page_xpath)):
+            yield Request("http://spu.taobao.com/spu/3c/detail.htm" +
+                    sel.xpath(self.next_page_xpath).extract()[0],
+                    callback=self.parse_list)
 

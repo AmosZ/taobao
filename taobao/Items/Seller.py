@@ -24,10 +24,6 @@ class Seller(Item):
             input_processor=MapCompose(unicode.strip,getSellerId),
             output_processor=TakeFirst()
             )
-#    commId = Field(
-            #input_processor=MapCompose(unicode.strip,getItemId),
-            #output_processor=TakeFirst()
-            #)
 
     reputScore = Field(
             #10001－20000个卖家信用积分
