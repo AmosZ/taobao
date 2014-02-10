@@ -11,12 +11,15 @@ BOT_NAME = 'taobao'
 SPIDER_MODULES = ['taobao.spiders']
 NEWSPIDER_MODULE = 'taobao.spiders'
 
-ITEM_PIPELINES = {'taobao.pipelines.TaobaoPipeline':100}
+ITEM_PIPELINES = {
+        'taobao.pipelines.SellerPipeline':100,
+#        'taobao.pipelines.CommodityPipeline':200,
+        }
 
 DATABASE = {'drivername': 'postgres',
             'host': 'localhost',
             'port': '5432',
-            'username': 'postgres',
+            'username': 'zq',
             'password': '111111',
             'database': 'taobao'}
 # Crawl responsibly by identifying yourself (and your website) on the user-agent

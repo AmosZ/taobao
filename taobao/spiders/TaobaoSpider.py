@@ -32,9 +32,10 @@ class TaobaoSpider(Spider):
             seller_loader = ItemLoader(Seller(),selector=s)
 
             # iterate over fields and add xpaths to the seller_loader
+            seller_loader.add_value('flag','Seller')
             seller_loader.add_xpath('name',Seller.item_fields['name'])
-#            seller_loader.add_xpath('url',Seller.item_fields['url'])
             seller_loader.add_xpath('sellerId',Seller.item_fields['sellerId'])
+            seller_loader.add_xpath('commId',Commodity.item_fields['commId'])
             seller_loader.add_xpath('reputScore',Seller.item_fields['reputScore'])
             seller_loader.add_xpath('positiveFeedbackRate',Seller.item_fields['positiveFeedbackRate'])
             seller_loader.add_xpath('shopDesc',Seller.item_fields['shopDesc'])
@@ -43,8 +44,10 @@ class TaobaoSpider(Spider):
         #Get commodity attributes
         for s in sel.xpath(Commodity.base_xpath):
             comm_loader = ItemLoader(Commodity(),selector=s)
+            comm_loader.add_value('flag','Commodity')
             comm_loader.add_xpath('title',Commodity.item_fields['title'])
-#            comm_loader.add_xpath('url',Commodity.item_fields['url'])
+            comm_loader.add_xpath('commId',Commodity.item_fields['commId'])
+            comm_loader.add_xpath('sellerId',Commodity.item_fields['sellerId'])
             comm_loader.add_xpath('turnover',Commodity.item_fields['turnover'])
             comm_loader.add_xpath('rateNumber',Commodity.item_fields['rateNumber'])
             yield comm_loader.load_item()

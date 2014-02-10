@@ -5,23 +5,12 @@ class PostgresqlModel(Model):
     class Meta:
         database = db
 
-def connect():
-    db.connect()
-
-class Commodity(PostgresqlModel):
-    commodity_id = PrimaryKeyField()
-#Avoid circular reference
-#    seller_id = ForeignKeyField(Seller,related_name='seller_id')
-    title = TextField()
-    commId = BigIntegerField()
-    turnover = IntegerField()
-    rateNumber = IntegerField()
 
 class Seller(PostgresqlModel):
     seller_id = PrimaryKeyField()
-    commodity_id = ForeignKeyField(Commodity,related_name='seller')
+    sellerId = BigIntegerField(index=True)#seller id in taobao
+    commId = BigIntegerField(index=True)#Commodity id in taobao
     name = TextField()
-    sellerId = BigIntegerField()
     reputScore = BigIntegerField()
     positiveFeedbackRate = FloatField()
 
@@ -30,3 +19,13 @@ class Seller(PostgresqlModel):
     servAttitude = FloatField()
     deliSpeed = FloatField()
 
+class Commodity(PostgresqlModel):
+    commodity_id = PrimaryKeyField()
+    commId = BigIntegerField(index=True)#Commodity id in taobao
+    sellerId = BigIntegerField(index=True)##seller id in taobao
+    title = TextField()
+    turnover = IntegerField()
+    rateNumber = IntegerField()
+
+def disconnect():
+    db.close()
