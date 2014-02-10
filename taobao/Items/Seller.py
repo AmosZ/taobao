@@ -8,7 +8,7 @@ class Seller(Item):
             'name': './/div[@class="seller"]/a/text()',
             #url : http://rate.taobao.com/user-rate-380624657.htm: http://rate.taobao.com/user-rate-$sellerId$.htm
             'sellerId': './/@data-quicklook',
-            'commId': './/@data-quicklook',
+            #'commId': './/@data-quicklook',
             'reputScore': './/li[@class="ensurer"]/p/img/@title',
             'positiveFeedbackRate': './/li[@class="ensurer"]/p[@class="hp"]/text()',
             'shopDesc': './/li[@class="ensurer"]//ul[@class="dropdown-list"]/li/a/span/text()',
@@ -24,10 +24,10 @@ class Seller(Item):
             input_processor=MapCompose(unicode.strip,getSellerId),
             output_processor=TakeFirst()
             )
-    commId = Field(
-            input_processor=MapCompose(unicode.strip,getItemId),
-            output_processor=TakeFirst()
-            )
+#    commId = Field(
+            #input_processor=MapCompose(unicode.strip,getItemId),
+            #output_processor=TakeFirst()
+            #)
 
     reputScore = Field(
             #10001－20000个卖家信用积分

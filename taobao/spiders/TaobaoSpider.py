@@ -35,7 +35,6 @@ class TaobaoSpider(Spider):
             seller_loader.add_value('flag','Seller')
             seller_loader.add_xpath('name',Seller.item_fields['name'])
             seller_loader.add_xpath('sellerId',Seller.item_fields['sellerId'])
-            seller_loader.add_xpath('commId',Commodity.item_fields['commId'])
             seller_loader.add_xpath('reputScore',Seller.item_fields['reputScore'])
             seller_loader.add_xpath('positiveFeedbackRate',Seller.item_fields['positiveFeedbackRate'])
             seller_loader.add_xpath('shopDesc',Seller.item_fields['shopDesc'])

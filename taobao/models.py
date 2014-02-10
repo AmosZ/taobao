@@ -9,7 +9,6 @@ class PostgresqlModel(Model):
 class Seller(PostgresqlModel):
     seller_id = PrimaryKeyField()
     sellerId = BigIntegerField(index=True)#seller id in taobao
-    commId = BigIntegerField(index=True)#Commodity id in taobao
     name = TextField()
     reputScore = BigIntegerField()
     positiveFeedbackRate = FloatField()
