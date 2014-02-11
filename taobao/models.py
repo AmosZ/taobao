@@ -1,51 +1,87 @@
 #-*-coding:utf-8-*- 
-from peewee import *
-db = PostgresqlDatabase('taobao',user='zq')
-class PostgresqlModel(Model):
-    """A base model that will use our Postgresql database"""
-    class Meta:
-        database = db
+#from peewee import *
+from sqlalchemy import *
+from sqlalchemy import create_engine,Column
+from sqlalchemy.types import Integer,String,BigInteger
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.engine.url import URL
+import settings
+
+DeclarativeBase = declarative_base()
+#db = PostgresqlDatabase('taobao',user='zq')
+def create_deals_table(engine):
+    """"""
+    DeclarativeBase.metadata.create_all(engine)
+
+def db_connect():
+    """
+    Performs database connection using database settings from settings.py.
+    Returns sqlalchemy engine instance
+    """
+    return create_engine(URL(**settings.DATABASE))
+
+#class PostgresqlModel(Model):
+    #"""A base model that will use our Postgresql database"""
+    #class Meta:
+        #database = db
 #########################Seller#######################################
-class SellerAttribute(PostgresqlModel):
+class SellerAttribute():
 #   One Seller may appear on different pages.
-    sellerId = BigIntegerField(index=True)
+#    __tablename__ = 'SellerAttribute'
+    sellerId = Column(BigInteger,primary_key=True)
     #datetime.date.today())
-    addedDate = DateField(index=True)
+    addedDate = Column('addedDate',Date)
 
-class Seller(SellerAttribute):
-    name = TextField()
+class Seller(SellerAttribute,DeclarativeBase):
+    __tablename__ = 'Seller'
+    name = Column('name', String)
 
-class ReputScore(SellerAttribute):
-    reputScore = BigIntegerField()
+class ReputScore(SellerAttribute,DeclarativeBase):
+    __tablename__ = 'ReputScore'
+    reputScore = Column('reputScore',BigInteger)
 
-class PositiveFeedbackRate(SellerAttribute):
-    positiveFeedbackRate = FloatField()
+class PositiveFeedbackRate(SellerAttribute,DeclarativeBase):
+    __tablename__ = 'PositiveFeedbackRate'
+    positiveFeedbackRate = Column('positiveFeedbackRate',Float)
 
-class TrueDesc(SellerAttribute):
-    trueDesc = FloatField()
+class TrueDesc(SellerAttribute,DeclarativeBase):
+#    trueDesc = FloatField()
+    __tablename__ = 'TrueDesc'
 
-class ServAttitude(SellerAttribute):
-    servAttitude = FloatField()
+    trueDesc = Column('trueDesc',Float)
 
-class DeliSpeed(SellerAttribute):
-    deliSpeed = FloatField()
+class ServAttitude(SellerAttribute,DeclarativeBase):
+    __tablename__ = 'ServAttitude'
+    servAttitude = Column('servAttitude',Float)
+
+class DeliSpeed(SellerAttribute,DeclarativeBase):
+    __tablename__ = 'DeliSpeed'
+    deliSpeed = Column('deliSpeed',Float)
 
 ###########################Commodity#############################
-class CommodityAttribute(PostgresqlModel):
+class CommodityAttribute():
+#    __tablename__ = 'CommodityAttribute'
 #   One Commodity may appear on different pages.
-    commId = BigIntegerField(index=True)
+    commId = Column(BigInteger,primary_key=True)
     #datetime.date.today())
-    addedDate = DateField(index=True)
+    addedDate = Column('addedDate',Date)
 
-class Commodity(CommodityAttribute):
-    sellerId = BigIntegerField(index=True)##seller id in taobao
-    title = TextField()
+class Commodity(CommodityAttribute,DeclarativeBase):
+    __tablename__ = 'Commodity'
+#    sellerId = BigIntegerField(index=True)##seller id in taobao
+    sellerId = Column('sellerId',BigInteger)
+#    title = TextField()
+    title = Column('title', String)
 
-class Turnover(CommodityAttribute):
-    turnover = IntegerField()
+class Turnover(CommodityAttribute,DeclarativeBase):
+#    turnover = IntegerField()
+    __tablename__ = 'Turnover'
+    turnover = Column('turnover',Integer)
 
-class RateNumber(CommodityAttribute):
-    rateNumber = IntegerField()
+class RateNumber(CommodityAttribute,DeclarativeBase):
+#    rateNumber = IntegerField()
+    __tablename__ = 'RateNumber'
+    rateNumber = Column('rateNumber',Integer)
 
 
 
