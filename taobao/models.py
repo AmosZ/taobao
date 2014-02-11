@@ -7,7 +7,8 @@ class PostgresqlModel(Model):
         database = db
 #########################Seller#######################################
 class SellerAttribute(PostgresqlModel):
-    sellerId = BigIntegerField(index=True,unique=True)
+#   One Seller may appear on different pages.
+    sellerId = BigIntegerField(index=True)
     #datetime.date.today())
     addedDate = DateField(index=True)
 
@@ -31,12 +32,13 @@ class DeliSpeed(SellerAttribute):
 
 ###########################Commodity#############################
 class CommodityAttribute(PostgresqlModel):
-    commId = BigIntegerField(index=True,unique=True)
+#   One Commodity may appear on different pages.
+    commId = BigIntegerField(index=True)
     #datetime.date.today())
     addedDate = DateField(index=True)
 
 class Commodity(CommodityAttribute):
-    sellerId = BigIntegerField(index=True,unique=True)##seller id in taobao
+    sellerId = BigIntegerField(index=True)##seller id in taobao
     title = TextField()
 
 class Turnover(CommodityAttribute):

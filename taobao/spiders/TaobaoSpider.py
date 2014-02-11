@@ -19,7 +19,7 @@ class TaobaoSpider(Spider):
     category_url_xpath = '//*[@id="guid-1355118887616"]/div/div/div/p[1]/a[1]/@href'
 #   start_urls = ["http://spu.taobao.com/spu/3c/detail.htm?&cat=1512&spuid=229361412"]
     next_page_xpath = './/a[@class="vm-page-next"]/@href'
-
+    page = 0
     #Retrieve iphone5s list url
     def parse(self,response):
         selector = Selector(response)
@@ -29,10 +29,12 @@ class TaobaoSpider(Spider):
     def parse_list(self,response):
         #Get seller attributes
         sel = Selector(response)
+        self.page += 1
         for s in sel.xpath(Seller.base_xpath):
             seller_loader = ItemLoader(Seller(),selector=s)
 
             # iterate over fields and add xpaths to the seller_loader
+            seller_loader.add_value('page',self.page)
             seller_loader.add_value('flag','Seller')
             seller_loader.add_xpath('name',Seller.item_fields['name'])
             seller_loader.add_xpath('sellerId',Seller.item_fields['sellerId'])
@@ -44,6 +46,7 @@ class TaobaoSpider(Spider):
         #Get commodity attributes
         for s in sel.xpath(Commodity.base_xpath):
             comm_loader = ItemLoader(Commodity(),selector=s)
+            comm_loader.add_value('page',self.page)
             comm_loader.add_value('flag','Commodity')
             comm_loader.add_xpath('title',Commodity.item_fields['title'])
             comm_loader.add_xpath('commId',Commodity.item_fields['commId'])

@@ -13,6 +13,7 @@ class Seller(Item):
             'positiveFeedbackRate': './/li[@class="ensurer"]/p[@class="hp"]/text()',
             'shopDesc': './/li[@class="ensurer"]//ul[@class="dropdown-list"]/li/a/span/text()',
             }
+    page = Field()
     flag = Field(
         output_processor = TakeFirst()
         )

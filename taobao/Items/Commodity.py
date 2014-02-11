@@ -12,6 +12,7 @@ class Commodity(Item):
             'turnover': './/ul[@class="attribute"]/li[@class="trade"]/p[1]',
             'rateNumber': './/@data-quicklook',
             }
+    page = Field()
     flag = Field(
             output_processor = TakeFirst()
             )
