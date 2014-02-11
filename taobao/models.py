@@ -5,27 +5,45 @@ class PostgresqlModel(Model):
     """A base model that will use our Postgresql database"""
     class Meta:
         database = db
+#########################Seller#######################################
+class SellerAttribute(PostgresqlModel):
+    sellerId = BigIntegerField(index=True,unique=True)
+    #datetime.date.today())
+    addedDate = DateField(index=True)
 
-
-class Seller(PostgresqlModel):
-    seller_id = PrimaryKeyField()
-    sellerId = BigIntegerField(index=True)#seller id in taobao
+class Seller(SellerAttribute):
     name = TextField()
+
+class ReputScore(SellerAttribute):
     reputScore = BigIntegerField()
+
+class PositiveFeedbackRate(SellerAttribute):
     positiveFeedbackRate = FloatField()
 
-    #Shop describe
+class TrueDesc(SellerAttribute):
     trueDesc = FloatField()
+
+class ServAttitude(SellerAttribute):
     servAttitude = FloatField()
+
+class DeliSpeed(SellerAttribute):
     deliSpeed = FloatField()
 
-class Commodity(PostgresqlModel):
-    commodity_id = PrimaryKeyField()
-    commId = BigIntegerField(index=True)#Commodity id in taobao
-    sellerId = BigIntegerField(index=True)##seller id in taobao
+###########################Commodity#############################
+class CommodityAttribute(PostgresqlModel):
+    commId = BigIntegerField(index=True,unique=True)
+    #datetime.date.today())
+    addedDate = DateField(index=True)
+
+class Commodity(CommodityAttribute):
+    sellerId = BigIntegerField(index=True,unique=True)##seller id in taobao
     title = TextField()
+
+class Turnover(CommodityAttribute):
     turnover = IntegerField()
+
+class RateNumber(CommodityAttribute):
     rateNumber = IntegerField()
 
-def disconnect():
-    db.close()
+
+
