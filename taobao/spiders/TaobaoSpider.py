@@ -11,8 +11,8 @@ from scrapy import log
 from ..Items.Seller import *
 from ..Items.Commodity import *
 
-class TaobaoSpider(Spider):
-    name = "taobao"
+class ListPageSpider(Spider):
+    name = "listPage"
     allowed_domains = ["taobao.com"]
     start_urls = ["http://www.taobao.com/market/3c/phone_index.php"]
 
@@ -32,15 +32,11 @@ class TaobaoSpider(Spider):
         self.page += 1
         for s in sel.xpath(Seller.base_xpath):
             seller_loader = ItemLoader(Seller(),selector=s)
-
             # iterate over fields and add xpaths to the seller_loader
             seller_loader.add_value('page',self.page)
             seller_loader.add_value('flag','Seller')
-            seller_loader.add_xpath('name',Seller.item_fields['name'])
-            seller_loader.add_xpath('sellerId',Seller.item_fields['sellerId'])
-            seller_loader.add_xpath('reputScore',Seller.item_fields['reputScore'])
-            seller_loader.add_xpath('positiveFeedbackRate',Seller.item_fields['positiveFeedbackRate'])
-            seller_loader.add_xpath('shopDesc',Seller.item_fields['shopDesc'])
+            for key,value in Seller.item_fields.iteritems():
+                seller_loader.add_xpath(key,value)
             yield seller_loader.load_item()
 
         #Get commodity attributes
@@ -48,11 +44,8 @@ class TaobaoSpider(Spider):
             comm_loader = ItemLoader(Commodity(),selector=s)
             comm_loader.add_value('page',self.page)
             comm_loader.add_value('flag','Commodity')
-            comm_loader.add_xpath('title',Commodity.item_fields['title'])
-            comm_loader.add_xpath('commId',Commodity.item_fields['commId'])
-            comm_loader.add_xpath('sellerId',Commodity.item_fields['sellerId'])
-            comm_loader.add_xpath('turnover',Commodity.item_fields['turnover'])
-            comm_loader.add_xpath('rateNumber',Commodity.item_fields['rateNumber'])
+            for key,value in Commodity.item_fields.iteritems():
+                comm_loader.add_xpath(key,value)
             yield comm_loader.load_item()
 
         if(sel.xpath(self.next_page_xpath)):

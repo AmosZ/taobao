@@ -11,6 +11,7 @@ class Commodity(Item):
             'sellerId':'.//@data-quicklook',
             'turnover': './/ul[@class="attribute"]/li[@class="trade"]/p[1]',
             'rateNumber': './/@data-quicklook',
+            'price': './/ul[@class="attribute"]/li[@class="place"]/span[@class="g_price vm-price"]/strong/text()'
             }
     page = Field()
     flag = Field(
@@ -38,5 +39,9 @@ class Commodity(Item):
 #evaNum':'5313 in data-quicklook
     rateNumber = Field(
             input_processor=MapCompose(unicode.strip,getEvaNum),
+            output_processor=TakeFirst()
+            )
+    price = Field(
+            input_processor=MapCompose(unicode.strip,getPrice),
             output_processor=TakeFirst()
             )

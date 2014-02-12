@@ -12,7 +12,7 @@ SPIDER_MODULES = ['taobao.spiders']
 NEWSPIDER_MODULE = 'taobao.spiders'
 
 ITEM_PIPELINES = {
-        'taobao.pipelines.SellerPipeline':100,
+        'taobao.pipelines.ListPagePipeline':100,
 #        'taobao.pipelines.CommodityPipeline':200,
         }
 

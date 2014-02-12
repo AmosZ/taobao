@@ -68,3 +68,5 @@ def getTurnover(text):
         return int(r.group(0))
     else:
         return 0
+def getPrice(text):
+    return float(text)
