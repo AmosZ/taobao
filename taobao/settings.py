@@ -23,4 +23,6 @@ DATABASE = {'drivername': 'postgres',
             'password': '111111',
             'database': 'taobao'}
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'taobao (+http://www.yourdomain.com)'
+#USER_AGENT = 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.5 Safari/537.36'
+#COOKIES_ENABLED = False
+#DOWNLOAD_DELAY = 0.25

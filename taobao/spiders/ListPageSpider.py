@@ -30,14 +30,14 @@ class ListPageSpider(Spider):
         #Get seller attributes
         sel = Selector(response)
         self.page += 1
-        for s in sel.xpath(Seller.base_xpath):
-            seller_loader = ItemLoader(Seller(),selector=s)
-            # iterate over fields and add xpaths to the seller_loader
-            seller_loader.add_value('page',self.page)
-            seller_loader.add_value('flag','Seller')
-            for key,value in Seller.item_fields.iteritems():
-                seller_loader.add_xpath(key,value)
-            yield seller_loader.load_item()
+#        for s in sel.xpath(Seller.base_xpath):
+            #seller_loader = ItemLoader(Seller(),selector=s)
+            ## iterate over fields and add xpaths to the seller_loader
+            #seller_loader.add_value('page',self.page)
+            #seller_loader.add_value('flag','Seller')
+            #for key,value in Seller.item_fields.iteritems():
+                #seller_loader.add_xpath(key,value)
+            #yield seller_loader.load_item()
 
         #Get commodity attributes
         for s in sel.xpath(Commodity.base_xpath):
@@ -45,11 +45,22 @@ class ListPageSpider(Spider):
             comm_loader.add_value('page',self.page)
             comm_loader.add_value('flag','Commodity')
             for key,value in Commodity.item_fields.iteritems():
-                comm_loader.add_xpath(key,value)
+                if key != 'url':
+                    comm_loader.add_xpath(key,value)
+                else:
+                    select = Selector(response)
+                    yield Request(select.xpath(value).extract()[0],callback=self.parse_commodity)
             yield comm_loader.load_item()
 
-        if(sel.xpath(self.next_page_xpath)):
-            yield Request("http://spu.taobao.com/spu/3c/detail.htm" +
-                    sel.xpath(self.next_page_xpath).extract()[0],
-                    callback=self.parse_list)
 
+        #Next page
+ #       if(sel.xpath(self.next_page_xpath)):
+            #yield Request("http://spu.taobao.com/spu/3c/detail.htm" +
+                    #sel.xpath(self.next_page_xpath).extract()[0],
+                    #callback=self.parse_list)
+
+    def parse_commodity(self,response):
+        print response.url
+        #select = Selector(response)
+#        for s in select.xpath('//a[@class="tb-tab-anchor"]/text()'):
+            #print s
