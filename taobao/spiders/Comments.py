@@ -16,7 +16,7 @@ import datetime
 from .. import models
 
 class CommentsSpider(Spider):
-    name = "comments"
+    name = "detail"
     allowed_domains = ["taobao.com","item.taobao.com"]
     day = datetime.date.today()
     #start_urls = ["http://item.taobao.com/item.htm?id=20128886326"]
@@ -40,7 +40,7 @@ class CommentsSpider(Spider):
 
     #The default implementation uses make_requests_from_url() to generate Requests for each url in start_urls.
     def start_requests(self):
-        urls =  models.Commodity.getCommodityURL(session=self.session,date=datetime.date(2014,2,20))
+        urls =  models.Commodity.getCommodityURL(session=self.session)
         #print urls
         for url in urls:
             yield Request(url,headers=self.headers,callback=self.parse)
@@ -49,6 +49,8 @@ class CommentsSpider(Spider):
         sel = Selector(response)
         self.page += 1
         #for s in sel.xpath(Comment.base_xpath):
+        from scrapy.shell import inspect_response
+        inspect_response(response)
         for s in sel.xpath('//*[@id="J_listBuyerOnView"]'):
             #[u'<div id="reviews" data-reviewapi="http://rate.taobao.com/detail_rate.htm?userNumId=853982&amp;auctionNumId=21894319337&amp;showContent=1&amp;currentPage=1&amp;ismore=0&amp;siteID=7" data-reviewcountapi="" data-listapi="http://rate.taobao.com/feedRateList.htm?userNumId=853982&amp;auctionNumId=21894319337&amp;siteID=7" data-commonapi="http://orate.alicdn.com/detailCommon.htm?userNumId=853982&amp;auctionNumId=21894319337&amp;siteID=7" data-usefulapi="http://rate.taobao.com/vote_useful.htm?userNumId=853982&amp;auctionNumId=21894319337">\r\n</div>']
 
@@ -60,7 +62,8 @@ class CommentsSpider(Spider):
                 common_loader.add_xpath(key,value)
             yield common_loader.load_item()
 
-
+        sel.xpath('//*[@id="J_listBuyerOnView"]/@data-api').extract()
+    #[u'http://detailskip.taobao.com/json/show_buyer_list.htm?step=false&bid_page=1&page_size=15&item_type=b&ends=1393151382000&starts=1392546582000&item_id=37213780715&user_tag=337448960&old_quantity=2800&zhichong=true&sold_total_num=16&seller_num_id=1723583774&dk=0&title=%B5%B1%CC%EC%B7%A2+%CB%CD%BA%EC%B0%FC+%BC%D9%D2%BB%C5%E2%CD%F2+Apple%2F%C6%BB%B9%FB+iPhone+5s+%C6%BB%B9%FB5s+%C8%D5%B0%E6%CA%D6%BB%FA&sbn=49d392362c217a64309a3d99b957b776&isTKA=false&msc=1']
 
 
 
