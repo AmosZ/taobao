@@ -12,7 +12,7 @@ from ..Items.Seller import *
 from ..Items.Commodity import *
 
 class ListPageSpider(Spider):
-    name = "listPage"
+    name = "list"
     allowed_domains = ["taobao.com"]
     start_urls = ["http://www.taobao.com/market/3c/phone_index.php"]
 
@@ -45,11 +45,7 @@ class ListPageSpider(Spider):
             comm_loader.add_value('page',self.page)
             comm_loader.add_value('flag','Commodity')
             for key,value in Commodity.item_fields.iteritems():
-#                if key != 'url':
                 comm_loader.add_xpath(key,value)
- #               else:
-  #              select = Selector(response)
-   #             yield Request(select.xpath(value).extract()[0],callback=self.parse_commodity)
             yield comm_loader.load_item()
 
 
@@ -59,8 +55,3 @@ class ListPageSpider(Spider):
                     sel.xpath(self.next_page_xpath).extract()[0],
                     callback=self.parse_list)
 
-#    def parse_commodity(self,response):
-        #print response.url
-        ##select = Selector(response)
-##        for s in select.xpath('//a[@class="tb-tab-anchor"]/text()'):
-            ##print s

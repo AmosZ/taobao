@@ -11,47 +11,68 @@ from sqlalchemy.orm import sessionmaker
 #It won't bring any confusion because Spider is at the highest layer and it can only access class Seller in Items
 from ..Items.Seller import *
 from ..Items.Commodity import *
+from ..Items.Comment import *
 import datetime
 from .. import models
 
 class CommentsSpider(Spider):
-    name = "commentsSpider"
-    allowed_domains = ["taobao.com"]
-#    comment_xpath = '//ul[@class="tb-r-comments"]'
-#    comment_xpath = '//*[@id="reviews"]/div[2]/ul'
+    name = "comments"
+    allowed_domains = ["taobao.com","item.taobao.com"]
     day = datetime.date.today()
-    start_urls = ["http://item.taobao.com/item.htm?id=20128886326"]
+    #start_urls = ["http://item.taobao.com/item.htm?id=20128886326"]
     page = 0
+    headers = {
+            'Accept': '*/*',
+            'Accept-Encoding': 'gzip,deflate,sdch',
+            'Accept-Language': 'en-US,en;q=0.8',
+            'Cache-Control': 'max-age=0',
+            'Connection': 'keep-alive',
+            'Host': 'item.taobao.com',
+            'Referer': 'http://spu.taobao.com/spu/3c/detail.htm?&cat=1512&spuid=229361412',
+            'User-Agent': 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36'\
+                ' (KHTML, like Gecko) Chrome/30.0.1599.114 Safari/537.36',
+            }
     # We shoud query sellerId and commId to get URL
-#    def __init__(self):
-        #engine = models.db_connect()
-        #self.Session = sessionmaker(bind=engine)
-        #self.session = self.Session()
+    def __init__(self):
+        engine = models.db_connect()
+        self.Session = sessionmaker(bind=engine)
+        self.session = self.Session()
 
     #The default implementation uses make_requests_from_url() to generate Requests for each url in start_urls.
-#    def start_requests(self):
-        #urls =  models.Commodity.getCommodityURL(session=self.session,date=datetime.date(2014,2,12))
-        #for url in urls:
-            #yield self.make_requests_from_url(url)
+    def start_requests(self):
+        urls =  models.Commodity.getCommodityURL(session=self.session,date=datetime.date(2014,2,20))
+        #print urls
+        for url in urls:
+            yield Request(url,headers=self.headers,callback=self.parse)
 
     def parse(self,response):
- #       print response.body
         sel = Selector(response)
         self.page += 1
-#        print sel.xpath('//*[@id="reviews"]/div[2]/ul/li[1]/div[2]/div/div[1]/text()')
- #       print sel.xpath('.//a[@class="tb-tab-anchor"]')
-        print response.body
+        #for s in sel.xpath(Comment.base_xpath):
+        for s in sel.xpath('//*[@id="J_listBuyerOnView"]'):
+            #[u'<div id="reviews" data-reviewapi="http://rate.taobao.com/detail_rate.htm?userNumId=853982&amp;auctionNumId=21894319337&amp;showContent=1&amp;currentPage=1&amp;ismore=0&amp;siteID=7" data-reviewcountapi="" data-listapi="http://rate.taobao.com/feedRateList.htm?userNumId=853982&amp;auctionNumId=21894319337&amp;siteID=7" data-commonapi="http://orate.alicdn.com/detailCommon.htm?userNumId=853982&amp;auctionNumId=21894319337&amp;siteID=7" data-usefulapi="http://rate.taobao.com/vote_useful.htm?userNumId=853982&amp;auctionNumId=21894319337">\r\n</div>']
 
-        ##Get commodity attributes
-        #for s in sel.xpath(Commodity.base_xpath):
-            #comm_loader = ItemLoader(Commodity(),selector=s)
-            #comm_loader.add_value('page',self.page)
-            #comm_loader.add_value('flag','Commodity')
-            #for key,value in Commodity.item_fields.iteritems():
-                #comm_loader.add_xpath(key,value)
-            #yield comm_loader.load_item()
+            common_loader = ItemLoader(Comment(),selector=s)
+            # iterate over fields and add xpaths to the common_loader
+            common_loader.add_value('page',self.page)
+            common_loader.add_value('flag','comment')
+            for key,value in Comment.item_fields.iteritems():
+                common_loader.add_xpath(key,value)
+            yield common_loader.load_item()
 
-        #if(sel.xpath(self.next_page_xpath)):
-            #yield Request("http://spu.taobao.com/spu/3c/detail.htm" +
-                    #sel.xpath(self.next_page_xpath).extract()[0],
-                    #callback=self.parse_list)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

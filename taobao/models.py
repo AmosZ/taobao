@@ -78,6 +78,7 @@ class Commodity(CommodityAttribute,DeclarativeBase):
     __tablename__ = 'Commodity'
     sellerId = Column('sellerId',BigInteger)
     title = Column('title', String)
+    # We can get commodify's url but I can scrapy it because taobao block spider
     @staticmethod
     def getCommodityURL(session,commId=0,date=datetime.date.today()):
         result = []
@@ -161,5 +162,18 @@ class Price(CommodityAttribute,DeclarativeBase):
         return result
 
 
+############################Comments##################################
+
+#http://a.m.tmall.com/ajax/rate_list.do?item_id=20098897075&p=1&ps=15&rateRs=-1
+# p : page, ps:page size, rateRs:rate type ---  1: good, 0: normal, -1:bad
+
+class Comments(DeclarativeBase):
+    __tablename__ = 'Comments'
+    addedDate = Column(Date)
+    commentId = Column(BigInteger,primary_key=True)
+    commId = Column(BigInteger)
+    buyerName = Column(String)
+    buyId = Column(BigInteger)
+    text = Column(String)
 
 

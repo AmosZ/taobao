@@ -14,11 +14,12 @@ class ListPagePipeline(object):
         self.Session = sessionmaker(bind=engine)
 
     def process_item(self, item, spider):
-        if spider.name == 'listPage':
+        if spider.name == 'list':
             flag = item.get('flag',None)
             today = datetime.date.today()
             session = self.Session()
             if flag == 'Seller':
+                print item['name']
                 #reputScore and positiveFeedbackRate may be empty
                 seller = models.Seller(name=item['name'],sellerId=item['sellerId'],addedDate=today)
                 reputScore = models.ReputScore(sellerId=item['sellerId'],addedDate=today,reputScore=item.get('reputScore',0))
@@ -42,6 +43,7 @@ class ListPagePipeline(object):
 
             elif flag == 'Commodity':
                 #turnover and rateNumber maybe empty
+                print item['title']
                 commodity = models.Commodity(
                         title=item['title'],commId=item['commId'],sellerId=item['sellerId'],addedDate=today
                         )
@@ -59,4 +61,23 @@ class ListPagePipeline(object):
                     raise
                 finally:
                     session.close()
+
+        elif spider.name == "comments":
+            flag = item.get('flag',None)
+            today = datetime.date.today()
+            session = self.Session()
+            if flag == 'comment':
+                print item['commentId']
+                comment = models.Comment(commentId=item['commentId'],commId=item['commId'],
+                        buyerName=item['buyerName'],buyId=item['buyId'],text=item['text'],
+                        addedDate=today)
+                try:
+                    session.add(comment)
+                    session.commit()
+                except:
+                    session.rollback()
+                    raise
+                finally:
+                    session.close()
+
         return item

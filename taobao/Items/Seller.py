@@ -6,9 +6,7 @@ class Seller(Item):
     base_xpath = '//*[@id="J_ListContent"]/ul/li'
     item_fields = {
             'name': './/div[@class="seller"]/a/text()',
-            #url : http://rate.taobao.com/user-rate-380624657.htm: http://rate.taobao.com/user-rate-$sellerId$.htm
             'sellerId': './/@data-quicklook',
-            #'commId': './/@data-quicklook',
             'reputScore': './/li[@class="ensurer"]/p/img/@title',
             'positiveFeedbackRate': './/li[@class="ensurer"]/p[@class="hp"]/text()',
             'shopDesc': './/li[@class="ensurer"]//ul[@class="dropdown-list"]/li/a/span/text()',

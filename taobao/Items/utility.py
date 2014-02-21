@@ -70,3 +70,9 @@ def getTurnover(text):
         return 0
 def getPrice(text):
     return float(text)
+
+def getBuyId(text):
+    return int(text)
+
+def getCommentId(text):
+   return int(text)
