@@ -26,8 +26,9 @@ class SellerAttribute(object):
     sellerId = Column(BigInteger,primary_key=True)
     addedDate = Column(Date,primary_key=True)
 
-class Seller(SellerAttribute,DeclarativeBase):
+class Seller(DeclarativeBase):
     __tablename__ = 'Seller'
+    sellerId = Column(BigInteger,primary_key=True)
     name = Column('name', String)
     @staticmethod
     def getSellerURL(session,sellerId=0,date=datetime.date.today()):
@@ -44,7 +45,8 @@ class Seller(SellerAttribute,DeclarativeBase):
             except NameError:
                 print self.__class__.__name__ + 'session doesn\'t exist!'
         return result
-
+class SellerDate(SellerAttribute,DeclarativeBase):
+    __tablename__ = 'SellerDate'
 
 class ReputScore(SellerAttribute,DeclarativeBase):
     __tablename__ = 'ReputScore'
@@ -74,9 +76,22 @@ class CommodityAttribute(object):
     commId = Column(BigInteger,primary_key=True)
     addedDate = Column(Date,primary_key=True)
 
-class Commodity(CommodityAttribute,DeclarativeBase):
+class CommodityDate(CommodityAttribute,DeclarativeBase):
+    __tablename__ = 'CommodityDate'
+    @staticmethod
+    def getAllCommodityIds(session,date=datetime.date.today()):
+        # query return a list of tuple
+        result =  session.query(CommodityDate.commId).filter(CommodityDate.addedDate == date).all()
+        ret = []
+        for i in result:
+            ret.append(i[0])
+        return ret
+
+
+class Commodity(DeclarativeBase):
     __tablename__ = 'Commodity'
     sellerId = Column('sellerId',BigInteger)
+    commId = Column(BigInteger,primary_key=True)
     title = Column('title', String)
     # We can get commodify's url but I can scrapy it because taobao block spider
     @staticmethod
@@ -172,8 +187,32 @@ class Comments(DeclarativeBase):
     addedDate = Column(Date)
     commentId = Column(BigInteger,primary_key=True)
     commId = Column(BigInteger)
-    buyerName = Column(String)
+    #buyerName = Column(String)
     buyId = Column(BigInteger)
+    useful = Column(Integer)
+    rate = Column(Integer)
     text = Column(String)
+    @staticmethod
+    def getCommentsURLPrefix(session,commId=0,sellerId=0):
+        #http://rate.taobao.com/feedRateList.htm?callback=jsonp_reviews_list&userNumId=380624657&auctionNumId=27610584433&currentPageNum=1
+        try:
+            if commId and sellerId:
+                match_seller_id = session.query(Commodity.sellerId).filter(Commodity.commId == commId).first()[0]
+                if(match_seller_id == sellerId):
+                    return 'http://rate.taobao.com/feedRateList.htm?callback=jsonp_reviews_list&userNumId='\
+                            + str(sellerId) + '&auctionNumId=' + str(commId) + '&currentPageNum='
+                else:
+                    return None
+
+            elif commId:
+                sellerId = session.query(Commodity.sellerId).filter(Commodity.commId == commId).first()[0]
+                if sellerId:
+                    return 'http://rate.taobao.com/feedRateList.htm?callback=jsonp_reviews_list&userNumId='\
+                            + str(sellerId) + '&auctionNumId=' + str(commId) + '&currentPageNum='
+                else:
+                    return None
+
+        except NameError:
+            print self.__class__.__name__ + 'session doesn\'t exist!'
 
 
