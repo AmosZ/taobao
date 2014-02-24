@@ -190,7 +190,7 @@ class Comments(DeclarativeBase):
     #buyerName = Column(String)
     buyId = Column(BigInteger)
     useful = Column(Integer)
-    rate = Column(Integer)
+    rate = Column(SmallInteger)
     time = Column(DateTime)
     text = Column(String)
     @staticmethod
