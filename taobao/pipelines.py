@@ -68,8 +68,8 @@ class ListPagePipeline(object):
             today = datetime.date.today()
             session = self.Session()
             if flag == 'comment':
-                comment = models.Comments(commentId=item['commentId'],commId=item['commId'],
-                        buyId=item['buyId'],text=item['text'],
+                comment = models.Comments(commentId=item['commentId'],commId=item['commId'],rate=item['rate'],
+                        buyId=item['buyId'],text=item['text'],time=item['time'],useful=item['useful'],
                         addedDate=today)
                 try:
                     session.add(comment)

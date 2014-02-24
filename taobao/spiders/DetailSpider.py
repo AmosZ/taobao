@@ -78,9 +78,8 @@ class CommentsSpider(Spider):
                     else:
                         l.add_value('buyId',0)
                     l.add_value('text',comment['content'])
-                    p = re.compile(ur'^(\d{4})\D+(\d{2})\D+(\d{2})\D+\s+(\d{2}):(\d{2})',re.UNICODE)
-                    time_string = comment['date']
-                    year = p.search()
+                    l.add_value('time',comment['date'])
+
                     yield l.load_item()
                 self.page += 1
             else:

@@ -3,7 +3,8 @@
 #
 # See documentation in:
 # http://doc.scrapy.org/en/latest/topics/items.html
-import re
+import re,json
+import datetime
 #text: {'sellerId':'196118321','itemId':'19974242521','evaNum':'5313','virtual':'false'}
 def getSellerId(text):
     text = text.replace('\'','')
@@ -76,3 +77,14 @@ def getBuyId(text):
 
 def getCommentId(text):
    return int(text)
+
+def getTime(time_string):
+    print "time_string" + time_string
+    p = re.compile(r'^(\d{4})\D+(\d{2})\D+(\d{2})\D+\s+(\d{2}):(\d{2})')
+    year = int(p.search(time_string).group(1))
+    month = int(p.search(time_string).group(2))
+    date = int(p.search(time_string).group(3))
+    hour = int(p.search(time_string).group(4))
+    minute = int(p.search(time_string).group(5))
+    return datetime.datetime(year,month,date,hour,minute)
+

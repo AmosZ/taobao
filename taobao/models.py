@@ -191,6 +191,7 @@ class Comments(DeclarativeBase):
     buyId = Column(BigInteger)
     useful = Column(Integer)
     rate = Column(Integer)
+    time = Column(DateTime)
     text = Column(String)
     @staticmethod
     def getCommentsURLPrefix(session,commId=0,sellerId=0):
